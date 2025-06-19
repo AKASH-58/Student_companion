@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Skill Tracker + Video Thumbnails Grid</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f5f8ff;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      color: #222;
+      padding: 20px 40px;
+    }
+
+    h1.main-title {
+      font-weight: 800;
+      font-size: 2.5rem;
+      text-align: center;
+      color: #1c2541;
+      margin-bottom: 25px;
+      margin-top:10px;
+      letter-spacing: 0.05em;
+      user-select: none;
+    }
+
+    .container {
+      flex: 1;
+      display: flex;
+      gap: 20px;
+      min-height: 0; /* for proper flexbox scrolling */
+    }
+
+    .left-container {
+      background: white;
+      border-radius: 14px;
+      box-shadow: 4px 4px 16px rgb(0 0 0 / 0.08);
+      padding: 32px 36px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .right-container {
+      background: rgb(236, 214, 248);
+      border-radius: 14px;
+      box-shadow: 4px 4px 16px rgb(0 0 0 / 0.08);
+      padding: 32px 36px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+    
+
+    .left-container {
+      width: 30%;
+      border-right: 3px solid #bcc6ff;
+    }
+
+    .right-container {
+      width: 70%;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      font-weight: 700;
+      font-size: 1.75rem;
+      color: #1c2541;
+      letter-spacing: 0.04em;
+      user-select: none;
+      text-align: center;
+    }
+
+    /* Left side inputs stacked vertically */
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+   .input-group input[type="text"],
+.input-group input[type="number"] {
+  padding: 8px 14px;       /* smaller padding */
+  font-size: 1.1rem;         /* smaller font size */
+  border: 2.5px solid #7a94f8;
+  border-radius: 8px;
+  outline-color: #5468ff;
+  width: 100%;
+  height: 35px;            /* set explicit height if needed */
+}
+
+    .input-group input[type="text"]:focus,
+    .input-group input[type="number"]:focus {
+      border-color: #5468ff;
+    }
+
+    button.add-btn {
+      background: #5468ff;
+      color: white;
+      border: none;
+      width:120px;
+      height: 40px;
+      padding: 2px;
+      border-radius: 16px;
+      font-weight: 500;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      box-shadow: 0 10px 15px rgb(84 104 255 / 0.35);
+      align-self: flex-start;
+      user-select: none;
+      margin-bottom: 20px;
+    }
+    button.add-btn:hover {
+      background: #3b4db1;
+    }
+
+    ul.skill-list {
+      list-style: none;
+      padding: 0;
+      margin: 2.5px;
+      flex-grow: 1;
+      overflow-y: auto;
+    }
+
+    ul.skill-list li {
+      background: #e2b6ff;
+      border-radius: 10px;
+      padding: 10px 15px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 6px 16px rgb(84 104 255 / 0.15);
+      font-weight: 500;
+      height:50px;
+      font-size: 1rem;
+      color: #000000;
+      position: relative;
+      user-select: none;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    ul.skill-list li.completed {
+      background: #b0d8a7;
+      color: #1b421f;
+      text-decoration: line-through;
+      box-shadow: 0 6px 16px rgb(32 105 15 / 0.35);
+    }
+
+    ul.skill-list li .skill-name {
+      max-width: 50%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    ul.skill-list li .days-left {
+      font-weight: 500;
+      font-size: 1.05rem;
+      color: #5468ff;
+      min-width: 110px;
+      text-align: center;
+      user-select: none;
+    }
+    ul.skill-list li.completed .days-left {
+      color: #1b421f;
+    }
+
+    ul.skill-list li button.complete-btn {
+      background: #44bb44;
+      border: none;
+      padding: 2px;
+      border-radius: 12px;
+      font-weight: 500;
+      font-size: 1rem;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      width: 35px;
+      height: 35px;
+      user-select: none;
+    }
+    ul.skill-list li button.complete-btn:hover {
+      background: #2d7a2d;
+    }
+
+    /* Right side: YouTube style thumbnails grid */
+
+    .video-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px 25px;
+      padding-bottom: 30px;
+      overflow-y: auto;
+    }
+
+    .video-card {
+      background: white;
+      border-radius: 18px;
+      cursor: pointer;
+      transition: box-shadow 0.3s ease, transform 0.3s ease;
+      user-select: none;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      height: 250px;
+    }
+    .video-card:hover {
+      box-shadow: 0 20px 30px rgb(0 0 0 / 0.25);
+      transform: translateY(-5px);
+    }
+
+    .thumbnail {
+      width: 100%;
+      height: 175px;
+      background: #d1d9ff;
+      background-position: center;
+      background-size: cover;
+      border-top-left-radius: 18px;
+      border-top-right-radius: 18px;
+      user-select: none;
+    }
+
+    .video-info {
+      padding: 13px 18px;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      user-select: none;
+    }
+
+    .video-title {
+      font-weight: 600;
+      font-size: 1.2rem;
+      color: #19284d;
+      margin-bottom: 8px;
+      line-height: 1.3;
+    }
+
+    .video-desc {
+      font-weight: 400;
+      font-size: 1rem;
+      color: #000000;
+      flex-grow: 1;
+      user-select: none;
+    }
+
+    /* Scrollbars styling */
+    .left-container::-webkit-scrollbar,
+    .right-container::-webkit-scrollbar {
+      width: 8px;
+    }
+    .left-container::-webkit-scrollbar-track,
+    .right-container::-webkit-scrollbar-track {
+      background: #f0f3ff;
+      border-radius: 12px;
+    }
+    .left-container::-webkit-scrollbar-thumb,
+    .right-container::-webkit-scrollbar-thumb {
+      background: #7a94f8;
+      border-radius: 12px;
+    }
+
+    @media (max-width: 900px) {
+      body {
+        padding: 20px 20px;
+      }
+      .container {
+        flex-direction: column;
+      }
+      .left-container, .right-container {
+        width: 100%;
+        border-right: none;
+        border-bottom: 3px solid #bcc6ff;
+        margin-bottom: 30px;
+        height: 320px;
+      }
+      .right-container {
+        border-bottom: none;
+        height: auto;
+      }
+      .video-grid {
+        grid-template-columns: 1fr !important;
+        gap: 20px !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h1 class="main-title">Smart Study Techniques</h1>
+
+  <div class="container">
+
+    <!-- Left container -->
+    <div class="left-container">
+      <h2>📊 Track Your Skills</h2>
+
+      <div class="input-group">
+        <input type="text" id="skillInput" placeholder="Enter skill name (e.g., React)" />
+        <input type="number" id="daysInput" placeholder="Days required to complete" min="1" />
+      </div>
+
+      <button class="add-btn" onclick="addSkill()">Add Skill</button>
+
+      <ul class="skill-list" id="skillList"></ul>
+    </div>
+
+    <!-- Right container -->
+    <div class="right-container">
+      <h2>🎥 Course Videos</h2>
+
+      <div class="video-grid" id="videoGrid">
+        <!-- Video cards inserted here -->
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // Format days left text nicely
+    function formatDaysLeft(days) {
+      if (days < 0) return 'Expired';
+      if (days === 0) return 'Last Day!';
+      if (days === 1) return '1 day left';
+      return days + ' days left';
+    }
+
+    // Skill Tracker logic
+    const skillInput = document.getElementById('skillInput');
+    const daysInput = document.getElementById('daysInput');
+    const skillList = document.getElementById('skillList');
+
+     let skills = JSON.parse(localStorage.getItem('skills')) || [];
+
+function saveSkills() {
+  localStorage.setItem('skills', JSON.stringify(skills));
+}
+
+function addSkill() {
+  const skillName = skillInput.value.trim();
+  const days = parseInt(daysInput.value);
+
+  if (!skillName) {
+    alert('Please enter a skill name.');
+    return;
+  }
+  if (!days || days < 1) {
+    alert('Please enter a valid number of days (minimum 1).');
+    return;
+  }
+
+  const startDate = new Date();
+
+  skills.push({
+    name: skillName,
+    daysToTrack: days,
+    startDate: startDate.toISOString().slice(0, 10),
+    completed: false,
+  });
+
+  saveSkills(); // Save to localStorage after adding
+
+  skillInput.value = '';
+  daysInput.value = '';
+  renderSkills();
+}
+
+function renderSkills() {
+  skillList.innerHTML = '';
+  const today = new Date();
+
+  skills.forEach((skill, index) => {
+    const li = document.createElement('li');
+    li.classList.toggle('completed', skill.completed);
+
+    const skillName = document.createElement('div');
+    skillName.textContent = skill.name;
+    skillName.className = 'skill-name';
+
+    const start = new Date(skill.startDate);
+    const elapsedMs = today - start;
+    const elapsedDays = Math.floor(elapsedMs / (1000 * 60 * 60 * 24));
+    const daysLeft = skill.daysToTrack - elapsedDays;
+
+    const daysLeftDiv = document.createElement('div');
+    daysLeftDiv.className = 'days-left';
+    daysLeftDiv.textContent = formatDaysLeft(daysLeft);
+
+    const completeBtn = document.createElement('button');
+    completeBtn.className = 'complete-btn';
+    completeBtn.textContent = skill.completed ? '↺' : '✔';
+    completeBtn.title = skill.completed ? 'Mark as incomplete' : 'Mark as completed';
+    completeBtn.onclick = () => {
+      skills[index].completed = !skills[index].completed;
+      saveSkills(); // Save changes after toggling
+      renderSkills();
+    };
+
+    // Create the delete button with an emoji
+    const deleteBtn = document.createElement('button');
+    deleteBtn.className = 'delete-btn';
+    deleteBtn.textContent = '❌'; // The delete emoji
+    deleteBtn.title = 'Delete skill';
+    deleteBtn.onclick = () => {
+      skills.splice(index, 1); // Remove the skill from the array
+      saveSkills(); // Save updated skills to localStorage
+      renderSkills(); // Re-render the skill list
+    };
+
+    // Append the buttons and other elements to the list item
+    li.appendChild(skillName);
+    li.appendChild(daysLeftDiv);
+    li.appendChild(completeBtn);
+    li.appendChild(deleteBtn); // Add the delete button
+
+    skillList.appendChild(li);
+  });
+}
+
+// Initially render skills loaded from localStorage
+renderSkills();
+
+
+    // Video thumbnails data
+    const videos = [
+      {
+        title: 'Python',
+        description: 'Python Full Course for beginners',
+        url: 'https://youtu.be/_uQrJ0TkZlc?si=jVXuc6VCt9uXubYe',
+        thumbnail: 'photos/1.png',
+      },
+
+      {
+        title: 'Java',
+        description: 'Java for programmers in 2 hours',
+        url: 'https://youtu.be/A0pu92-pYhE?si=Nx0Kz44b8GsJNce9',
+        thumbnail: 'photos/2.png',
+      },
+     
+      {
+        title: 'C ',
+        description: 'C language tutorials for Beginners.',
+        url: 'https://youtu.be/irqbmMNs2Bo?si=sh9wJ3R4x3j8UFRB',
+        thumbnail: 'photos/3.png',
+      },
+
+      {
+        title: 'C++',
+        description: 'The Ultimate C++ guide for Beginners',
+        url: 'https://youtu.be/OVrH_6s510k?si=UvqPgsPutZkUCZBr',
+        thumbnail: 'photos/4.png',
+      },
+
+      {
+        title: ' JavaScript',
+        description: 'Javascript tutorial Full course- Beginner to Pro.',
+        url: 'https://youtu.be/EerdGm-ehJQ?si=Yhjkr-u9qR8_boiJ',
+        thumbnail: 'photos/5.png',
+      },
+
+      {
+        title: ' SQL databases ',
+        description: ' SQL Tutorial- Full Database Course',
+        url: 'https://youtu.be/HXV3zeQKqGY?si=0cVCNDzWR94shuHb ',
+        thumbnail: ' photos/6.png ',
+      },
+
+      {
+        title: ' Data Structures and Algorithms  ',
+        description: ' Data Structures and Algorithms Tutorial - Full Course ',
+        url: ' https://youtu.be/8hly31xKli0?si=yA4aJlMgI8Ev_9gR ',
+        thumbnail: ' photos/7.png ',
+      },
+      
+      {
+        title: ' NoSQl databases  ',
+        description: ' NoSQL Databases Tutorial for Beginners  ',
+        url: ' https://youtu.be/xh4gy1lbL2k?si=nlz5q9-UWo45HiMD ',
+        thumbnail: ' photos/8.png ',
+      },
+ 
+      {
+        title: ' Version control (Git & GitHub) ',
+        description: ' Git and GitHub tutorial for beginners',
+        url: 'https://youtu.be/xuB1Id2Wxak?si=5VrZAMv3TxL8OS70 ',
+        thumbnail: ' photos/9.png ',
+      },
+
+      {
+        title: ' HTML ',
+        description: ' HTML tutorial for Beginners',
+        url: ' https://youtu.be/HcOc7P5BMi4?si=ybnOVa5_zBTs7oDW',
+        thumbnail: ' photos/10.png ',
+      },
+
+      {
+        title: ' React ',
+        description: ' React Full Course for free ',
+        url: 'https://youtu.be/CgkZ7MvWUAA?si=CtMRsaGcM0VvUCVq ',
+        thumbnail: ' photos/11.png ',
+      },
+
+      {
+        title: ' CSS ',
+        description: ' CSS Full Course for Beginners',
+        url: 'https://youtu.be/n4R2E7O-Ngo?si=p8UveZArH9R_PB5B ',
+        thumbnail: ' photos/12.png ',
+      },
+
+      {
+        title: ' Angular ',
+        description: ' Learn Angular and TypeScript',
+        url: 'https://youtu.be/k5E2AVpwsko?si=nCPIkmNjEnTrzNq7 ',
+        thumbnail: ' photos/13.png ',
+      },
+
+      {
+        title: ' Mobile App Development (Android/iOS)  ',
+        description: 'Android Development for Beginners in Hindi ',
+        url: ' https://youtu.be/mXjZQX3UzOs?si=GpeP_NhkN08i-GtF',
+        thumbnail: ' photos/14.png ',
+      },
+
+      {
+        title: ' API Design and Development ',
+        description: ' Apis for Beginners- How to use an API(Full course) ',
+        url: 'https://youtu.be/WXsD0ZgxjRw?si=w3wyVhLMDWQlu6nC ',
+        thumbnail: ' photos/15.png ',
+      },
+
+      {
+        title: ' Data Analytics  ',
+        description: ' Data Analytics Full Course for Beginner to Pro',
+        url: ' https://youtu.be/VaSjiJMrq24?si=fqTA3s7XFyWPBVa2',
+        thumbnail: ' photos/16.png ',
+      },
+
+      {
+        title: ' Linux Command Line & Shell Scripting ',
+        description: ' Shell scripting and Linux Tutorial',
+        url: 'https://youtu.be/9ckXibjManw?si=b46ZMxy5oKRrFd9J ',
+        thumbnail: ' photos/17.png ',
+      },
+
+      {
+        title: ' Docker & Containers ',
+        description: 'Dockers and Containers explained ',
+        url: 'https://youtu.be/A0g7I4A6GN4?si=3dAFouLm3e7qd8i_ ',
+        thumbnail: ' photos/18.png ',
+      },
+
+      {
+        title: ' Continuous Integration/Continuous Deployment (CI/CD) ',
+        description: 'CI/CD Full course ',
+        url: 'https://www.youtube.com/live/h9K1NnqwUvE?si=IvbFolctk9GwaRWh ',
+        thumbnail: ' photos/19.png ',
+      },
+
+      {
+        title: ' Internet of Things (IoT) ',
+        description: ' IoT Course-Learn IoT in 5 hours',
+        url: 'https://youtu.be/b7GC4Zr74M0?si=4INUwCzG2scyf9pq ',
+        thumbnail: ' photos/20.png ',
+      },
+
+      {
+        title: ' Blockchain & Cryptocurrencies ',
+        description: ' Blockchain Technology (2 Hour Course) ',
+        url: ' https://youtu.be/qOVAbKKSH10?si=yxHsGh3CcvT36ctD',
+        thumbnail: ' photos/21.png ',
+      },
+
+      {
+        title: ' Augmented Reality ',
+        description: '  AR for everyone',
+        url: 'https://youtu.be/WzfDo2Wpxks?si=jsfftxLscKljI0s9 ',
+        thumbnail: 'photos/22.png  ',
+      },
+
+      {
+        title: ' Critical Thinking Mastery ',
+        description: ' Transform your Mindset for ultimate personal growth ',
+        url: 'https://youtu.be/XFLcHOA-Q0g?si=Mq8bGqpMQ27GJn8O ',
+        thumbnail: ' photos/23.png ',
+      },
+
+      {
+        title: ' Cybersecurity Fundamentals ',
+        description: 'Cybersecurity Fundamentals Course 2023',
+        url: 'https://youtu.be/Asurd09LmCU?si=MxEoSqIkMKB59WoJ ',
+        thumbnail: ' photos/27.png ',
+      },
+
+      {
+        title: ' Networking Basics  ',
+        description: ' Learn Networking in 3 hours ',
+        url: ' https://youtu.be/iSOfkw_YyOU?si=Ter4GdebNS-u2oL0 ',
+        thumbnail: ' photos/28.png ',
+      },
+
+      {
+        title: ' Introduction to DevOps ',
+        description: ' Introduction to DevOps Principles, virtualization and Docker ',
+        url: ' https://www.youtube.com/live/JRmV_mKnnyU?si=Z0YHYWh7o8pBQ9mD ',
+        thumbnail: ' photos/29.png  ',
+      },
+
+      {
+        title: ' Operating Systems ',
+        description: 'Operating System in One Shot  ',
+        url: 'https://youtu.be/8XBtAjKwCm4?si=S2GZZhmzLJzyuD-c ',
+        thumbnail: ' photos/30.png ',
+      },
+
+    ];
+
+    function renderVideos() {
+      const grid = document.getElementById('videoGrid');
+      grid.innerHTML = '';
+      videos.forEach(video => {
+        const card = document.createElement('div');
+        card.className = 'video-card';
+        card.onclick = () => window.open(video.url, '_blank');
+
+        card.innerHTML = `
+          <div class="thumbnail" style="background-image: url('${video.thumbnail}')"></div>
+          <div class="video-info">
+            <div class="video-title">${video.title}</div>
+            <div class="video-desc">${video.description}</div>
+          </div>
+        `;
+
+        grid.appendChild(card);
+      });
+    }
+
+    renderVideos();
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,34 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"  content="width=device-width, initial-scale=1.0">
+  <title>📘 Attendance Tracker</title>
+  <link rel="stylesheet" href="attendence.css">
+</head>
+<body>
+  <div class="container">
+    <h1>📘 Attendance Tracker</h1>
+    
+    <div class="form-container">
+    <input type="text" id="subjectInput" placeholder="Enter Subject">
+    <input type="date" id="dateInput">
+
+    <div class="button-row">
+      <button onclick="markAttendance('Present')">✅ Present</button>
+      <button onclick="markAttendance('Absent')">❌ Absent</button>
+    </div>
+    </div>
+    <br>
+    <br>
+
+    <h2>📚 Subjects</h2>
+    <div id="subjectList" class="chat-list"></div>
+
+    <div id="subjectDetails" class="subject-details"></div>
+  </div>
+
+  <script src="attendence.js"></script>
+</body>
+</html>

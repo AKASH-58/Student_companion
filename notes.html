@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>📚 Notes Organizer</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to right, #8360c3, #2ebf91);
+      color: #333;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 3rem auto;
+      background: #fff;
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 2rem;
+      color: #2ebf91;
+    }
+
+    .upload-section, .search-section {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      justify-content: center;
+    }
+
+    input[type="file"],
+    input[type="text"] {
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      width: 100%;
+      max-width: 300px;
+    }
+
+    button {
+      background-color: #2ebf91;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #239e78;
+    }
+
+    .notes-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .note-card {
+      background-color: #f4f9f8;
+      padding: 1rem;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .note-content {
+      max-width: 70%;
+    }
+
+    .note-card h4 {
+      margin: 0 0 0.3rem 0;
+      color: #8360c3;
+    }
+
+    .note-card p {
+      margin: 0.5rem 0;
+      color: #444;
+    }
+
+    .note-card .actions {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .note-card a {
+      text-decoration: none;
+      background-color: #2ebf91;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    .note-card .delete-btn {
+      background-color: crimson;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 6px 12px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📚 Notes Organizer</h1>
+
+    <div class="upload-section">
+      <input type="file" id="fileInput" accept=".pdf,.doc,.docx,.ppt,.pptx" />
+      <input type="text" id="subjectTag" placeholder="Enter Subject (e.g. Physics)" />
+      <button onclick="uploadNote()">Upload Note</button>
+    </div>
+
+    <div class="search-section">
+      <input type="text" id="searchInput" placeholder="Search by subject..." onkeyup="filterNotes()" />
+    </div>
+
+    <div id="notesList" class="notes-grid"></div>
+  </div>
+
+  <script>
+    let notes = JSON.parse(localStorage.getItem("notesResources")) || [];
+
+    function uploadNote() {
+      const fileInput = document.getElementById("fileInput");
+      const subjectTag = document.getElementById("subjectTag").value.trim();
+
+      const file = fileInput.files[0];
+      if (!file || !subjectTag) {
+        alert("Please select a file and enter a subject tag.");
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function () {
+        notes.push({
+          name: file.name,
+          subject: subjectTag,
+          data: reader.result
+        });
+        localStorage.setItem("notesResources", JSON.stringify(notes));
+        displayNotes();
+        fileInput.value = "";
+        document.getElementById("subjectTag").value = "";
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function displayNotes(filter = "") {
+      const notesList = document.getElementById("notesList");
+      notesList.innerHTML = "";
+
+      const filtered = notes.filter(n => n.subject.toLowerCase().includes(filter.toLowerCase()));
+      filtered.forEach((note, index) => {
+        const card = document.createElement("div");
+        card.className = "note-card";
+        card.innerHTML = `
+          <div class="note-content">
+            <h4>📎 ${note.name}</h4>
+            <p><strong>Subject:</strong> ${note.subject}</p>
+          </div>
+          <div class="actions">
+            <a href="${note.data}" target="_blank">View</a>
+            <button class="delete-btn" onclick="deleteNote(${index})">Delete</button>
+          </div>
+        `;
+        notesList.appendChild(card);
+      });
+    }
+
+    function filterNotes() {
+      const value = document.getElementById("searchInput").value;
+      displayNotes(value);
+    }
+
+    function deleteNote(index) {
+      if (confirm("Are you sure you want to delete this note?")) {
+        notes.splice(index, 1);
+        localStorage.setItem("notesResources", JSON.stringify(notes));
+        displayNotes();
+      }
+    }
+
+    window.onload = function () {
+      displayNotes();
+    };
+  </script>
+</body>
+</html>

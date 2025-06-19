@@ -1,0 +1,195 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #74ebd5 0%, #ACB6E5 100%);
+  margin: 0;
+  padding: 30px 20px;
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+.container {
+  background: white;
+  padding: 25px 60px;
+  border-radius: 20px;
+  max-width: 1100px;
+  width: 100%;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+}
+
+h1 {
+  text-align: center;
+  color: #3b3b98;
+  margin-bottom: 20px;
+  letter-spacing: 1.2px;
+}
+
+.time-slot-input {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.time-slot-input input {
+  padding: 10px 15px;
+  font-size: 16px;
+  border: 2px solid #b1faed;
+  border-radius: 50px;
+  outline: none;
+  width: 250px;
+  transition: border-color 0.3s ease;
+}
+
+.time-slot-input input:focus {
+  border-color: #3b3b98;
+}
+
+.time-slot-input button {
+  background: #3b3b98;
+  color: white;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  padding: 0 25px;
+  font-size: 20px;
+  transition: background 0.3s ease;
+}
+
+.time-slot-input button:hover {
+  background: #2c2c72;
+}
+
+#timetable {
+  display: grid;
+  grid-template-rows: 60px repeat(7,1fr);
+  grid-template-columns: unset;
+  gap: 12px;
+}
+
+.timetable-header {
+  font-weight: 600;
+  height: 50px;
+  font-size: 14px;
+  color: #3b3b98;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  background: #dff9fb;
+  border-radius: 12px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+}
+
+.time-label {
+  background: #60a3bc;
+  color: white;
+  font-weight: 600;
+  font-size: 14px;
+  padding: 14px 8px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 3px 10px rgba(96,163,188,0.6);
+}
+
+.timetable-cell {
+  background: #74ebd5;
+  border-radius: 14px;
+  min-height: 50px;
+  padding: 10px 12px;
+  color: black;
+  box-shadow: 0 6px 14px rgba(116,235,213,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: default;
+  font-weight: 600;
+  font-size: 15px;
+  user-select: none;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  position: relative;
+}
+
+.timetable-cell.editable {
+  cursor: text;
+  user-select: text;
+}
+
+.timetable-cell:hover {
+  transform: scale(1.05);
+  box-shadow: 0 10px 20px rgba(116,235,213,0.8);
+}
+
+.timetable-cell input {
+  width: 100%;
+  border: none;
+  background: transparent;
+  font-weight: 600;
+  font-size: 15px;
+  color: #0a3d62;
+  outline: none;
+  text-align: center;
+  cursor: text;
+}
+
+.buttons {
+  margin-top: 25px;
+  text-align: center;
+}
+
+button {
+  background-color: #3b3b98;
+  border: none;
+  color: white;
+  padding: 12px 22px;
+  font-size: 18px;
+  border-radius: 50px;
+  cursor: pointer;
+  margin: 0 10px;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #2c2c72;
+}
+
+button#clearBtn {
+  background-color: #e55039;
+}
+
+button#clearBtn:hover {
+  background-color: #c0392b;
+}
+
+#currentTime {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: black;
+  margin-bottom: 5px;
+  margin-left:50px;
+}
+
+#currentPeriod {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: black;
+  margin-bottom: 30px;
+  margin-left:50px;
+}
+
+.glow {
+  animation: glowAnim 1s infinite alternate;
+  box-shadow: 0 0 15px 5px rgba(255, 255, 0, 0.7);
+  border: 2px solid yellow;
+}
+
+@keyframes glowAnim {
+  0% { box-shadow: 0 0 10px 3px rgba(255, 255, 0, 0.5); }
+  100% { box-shadow: 0 0 20px 6px rgba(255, 255, 0, 1); }
+}
+

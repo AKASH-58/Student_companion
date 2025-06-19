@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"  content="width=device-width, initial-scale=1.0">
+  <title>Student Companion Website</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik+Doodle+Shadow&family=Roboto+Slab:wght@700&family=Orbitron:wght@700&family=Pacifico&family=Poppins:wght@700&display=swap" rel="stylesheet">
+  <style>
+    /* your existing styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body, html {
+      height: 100%;
+      font-family: Arial, sans-serif;
+    }
+
+    .background {
+      background-image: url('BB1.jpg'); 
+      background-size: cover;
+      background-position: center;
+      height: 100%;
+      align-items: center;
+      display: flex;
+      flex-direction: column;
+      transition: transform 1s ease, filter 0.5s ease;
+    }
+
+    .background.zoomed {
+      transform: scale(1.5);
+    }
+
+    .quote {
+      font-size: 20px;
+      color: #f0f0f0;
+      text-align: center;
+      max-width: 600px;
+      padding: 10px 20px;
+      font-style: italic;
+      text-shadow: 1px 1px 3px #000;
+      margin-bottom: 40px;
+    }
+
+    .tagline {
+      font-size: 18px;
+      color: #ffe;
+      text-align: center;
+      margin-bottom: 20px;
+      text-shadow: 1px 1px 2px #000;
+    }
+
+    .title {
+      font-size: 40px;
+      color: white;
+      text-shadow: 2px 2px 4px #000;
+      margin-top: 50px;
+      margin-bottom: 40px;
+      font-family: 'Orbitron', sans-serif;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 40px;
+      z-index: 2;
+    }
+
+    .login-btn, .register-btn {
+      padding: 15px 30px;
+      font-size: 15px;
+      background-color: white;
+      border: none;
+      border-radius: 12px; 
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .login-btn:hover, .register-btn:hover {
+      background-color: #fff;
+    }
+
+    .form-container {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
+      width: 340px;
+      z-index: 3;
+      opacity: 0;
+      transition: transform 0.5s ease, opacity 0.5s ease;
+    }
+
+    .form-container.show {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 1;
+    }
+
+    .form-container h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .form-container input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0 5px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    .password-container {
+      position: relative;
+    }
+
+    .toggle-password {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+      color: #007bff;
+    }
+
+    .form-container button.submit-btn {
+      width: 100%;
+      padding: 10px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      margin-top: 10px;
+      cursor: pointer;
+    }
+
+    .form-container button.submit-btn:hover {
+      background-color: #0056b3;
+    }
+
+    .switch-link {
+      text-align: center;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+
+    .switch-link a {
+      color: #007bff;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: transparent;
+      z-index: 2;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="background" id="bg">
+    <div class="title">Student Companion Website</div>
+    <div class="quote">
+    “Wisdom is not a product of schooling but of the lifelong attempt to acquire it.”<br>
+    — Albert Einstein
+    </div>
+    <div class="tagline">Login to level up your learning.</div>
+    <div class="button-group">
+      <button class="login-btn" id="loginBtn">Login</button>
+      <button class="register-btn" id="registerBtn">Register</button>
+    </div>
+  </div>
+
+  <div class="overlay" id="overlay" style="display: none;"></div>
+
+  <!-- Login Form -->
+  <div class="form-container" id="loginForm">
+    <h2>Login</h2>
+    <input type="text" placeholder="Username">
+    <div class="password-container">
+      <input type="password" placeholder="Password" id="loginPassword">
+      <button class="toggle-password" onclick="togglePassword('loginPassword', this)">Show</button>
+    </div>
+    <button class="submit-btn">Login</button>
+    <div class="switch-link">Don't have an account? <a id="switchToRegister">Register</a></div>
+  </div>
+
+  <!-- Register Form -->
+  <div class="form-container" id="registerForm">
+    <h2>Register</h2>
+    <input type="text" placeholder="Username">
+    <input type="email" placeholder="Email">
+    <div class="password-container">
+      <input type="password" placeholder="Password" id="registerPassword">
+      <button class="toggle-password" onclick="togglePassword('registerPassword', this)">Show</button>
+    </div>
+    <div class="password-container">
+      <input type="password" placeholder="Confirm Password" id="confirmPassword">
+      <button class="toggle-password" onclick="togglePassword('confirmPassword', this)">Show</button>
+    </div>
+    <button class="submit-btn">Register</button>
+    <div class="switch-link">Already have an account? <a id="switchToLogin">Login</a></div>
+  </div>
+
+  <script>
+    const bg = document.getElementById('bg');
+    const overlay = document.getElementById('overlay');
+    const loginBtn = document.getElementById('loginBtn');
+    const registerBtn = document.getElementById('registerBtn');
+    const loginForm = document.getElementById('loginForm');
+    const registerForm = document.getElementById('registerForm');
+    const switchToRegister = document.getElementById('switchToRegister');
+    const switchToLogin = document.getElementById('switchToLogin');
+
+    document.querySelector('#registerForm .submit-btn').addEventListener('click', function () {
+    const username = document.querySelector('#registerForm input[placeholder="Username"]').value;
+    const email = document.querySelector('#registerForm input[placeholder="Email"]').value;
+    const password = document.getElementById('registerPassword').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+
+    if (!username || !email || !password || !confirmPassword) {
+      alert("Please fill all fields.");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      alert("Passwords do not match.");
+      return;
+    }
+
+    // Save user data to localStorage
+    const user = { username, email, password };
+    localStorage.setItem("user", JSON.stringify(user));
+    alert("Registration successful! You can now log in.");
+    
+    showLogin(); // switch to login form
+  });
+
+  // Login logic
+  document.querySelector('#loginForm .submit-btn').addEventListener('click', function () {
+    const usernameInput = document.querySelector('#loginForm input[placeholder="Username"]').value;
+    const passwordInput = document.getElementById('loginPassword').value;
+
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+
+    if (!storedUser) {
+      alert("No registered user found. Please register first.");
+      return;
+    }
+    if (usernameInput === storedUser.username && passwordInput === storedUser.password) {
+  alert(`Welcome back, ${storedUser.username}!`);
+  window.location.href = "mainpage.html";  // 👈 Redirect to your file
+} else {
+  alert("Invalid username or password.");
+}
+
+    
+  });
+
+    function showLogin() {
+      bg.classList.add('zoomed');
+      loginForm.classList.add('show');
+      registerForm.classList.remove('show');
+      overlay.style.display = 'block';
+    }
+
+    function showRegister() {
+      bg.classList.add('zoomed');
+      registerForm.classList.add('show');
+      loginForm.classList.remove('show');
+      overlay.style.display = 'block';
+    }
+
+    loginBtn.addEventListener('click', showLogin);
+    registerBtn.addEventListener('click', showRegister);
+    switchToRegister.addEventListener('click', showRegister);
+    switchToLogin.addEventListener('click', showLogin);
+
+    overlay.addEventListener('click', () => {
+      bg.classList.remove('zoomed');
+      loginForm.classList.remove('show');
+      registerForm.classList.remove('show');
+      overlay.style.display = 'none';
+    });
+
+    function togglePassword(id, btn) {
+      const input = document.getElementById(id);
+      if (input.type === "password") {
+        input.type = "text";
+        btn.textContent = "Hide";
+      } else {
+        input.type = "password";
+        btn.textContent = "Show";
+      }
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Creative Smart Timetable</title>
+  <link rel="stylesheet" href="timetable.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>🗓️ Smart Timetable</h1>
+
+    <br>
+    <p id="currentTime" ></p> 
+    <p id="currentPeriod" >
+    <br>
+    <div id="timetable"></div>
+    <br>
+    <div>
+    <div class="time-slot-input">
+    <button onclick="addTimeSlot()">Add Time slot</button>
+     <input type="text" id="newTimeSlot" placeholder="Add time slot (e.g. 9-10 AM)" />
+    </div>
+
+      <div class="buttons">
+      <button id="editBtn">✏️ Edit</button>
+      <button id="saveBtn" style="display:none;">💾 Save</button>
+      <button id="clearBtn" style="background:#e55039;">🗑️ Clear All</button>
+    </div>
+    </div>
+  </div>
+
+  <script src="timetable.js"></script>
+</body>
+</html>
